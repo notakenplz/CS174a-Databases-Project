@@ -1,0 +1,227 @@
+import java.sql.*;
+
+
+public class MyTest {
+
+
+// common elements throughout the entire program
+
+static Connection conn;
+
+
+public MyTest()
+
+{
+
+
+}
+
+
+/**
+
+* @param args
+
+*/
+
+public static void main(String[] args) throws SQLException{
+
+
+// 1. Load the Oracle JDBC driver for this program
+
+try
+
+{
+
+      DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
+
+}
+
+catch ( Exception e)
+
+{
+
+e.printStackTrace();
+
+}
+
+///////////////////////////////////////////////////
+
+
+    // 2. Test functions for each query
+
+print_all();
+
+
+//System.out.println("1. withrawal");
+
+//withraw(111, 200);
+
+//print_all();
+
+//
+
+//System.out.println("2. deposit");
+
+//deposit(222, 55);
+
+//print_all();
+
+//
+
+//System.out.println("3. transfer");
+
+//transfer(222,111,34.45);
+
+//print_all();
+
+
+System.out.println("4. number of accounts: " + numOfaccount());
+
+
+
+}
+
+
+public static void print_all() throws SQLException
+
+{
+
+// Connect to the database  ... connection pool managers?
+
+conn = DriverManager.getConnection ("jdbc:oracle:thin:@uml.cs.ucsb.edu:1521:xe","ychoi01","0311");
+
+
+    // Create a Statement
+
+    Statement stmt = conn.createStatement();
+
+
+    // Specify the Query to run
+
+    ResultSet rs = stmt.executeQuery ("select accid, bal, type from account");
+
+
+    // Iterate through the result and print the data
+
+    System.out.println("result:");
+
+    System.out.println("accid\tbal\t\ttype");
+
+    while(rs.next())
+
+    {
+
+    System.out.println(String.format("%d\t%f\t%s",rs.getInt("accid"), rs.getFloat("bal"), rs.getString(2)));
+
+    }
+
+   
+
+    // don't miss this
+
+    rs.close();
+
+}
+
+
+public static int withraw(int accid, double bal) throws SQLException
+
+{
+
+PreparedStatement withraw_statement;
+
+    String updateSuppSQL = "update account set bal=bal-? where accid = ?";
+
+    withraw_statement = conn.prepareStatement(updateSuppSQL);
+
+   
+
+    withraw_statement.setDouble(1, bal);
+
+    withraw_statement.setInt(2,accid);
+
+   
+
+   
+
+    int n = withraw_statement.executeUpdate();
+
+    System.out.println("updates  : " + n );
+
+    withraw_statement.close();
+
+
+return n;
+
+}
+
+
+public static int deposit(int accid, double bal)
+
+{
+
+return 0;
+
+}
+
+
+public static int transfer(int accid_from, int accid_to, double bal)
+
+{
+
+return 0;
+
+}
+
+
+public static int writecheck(int accid, double bal)
+
+{
+
+return 0;
+
+}
+
+
+public static int numOfaccount() throws SQLException
+
+{
+
+int retVal;
+
+// Connect to the database  ... connection pool managers?
+
+conn = DriverManager.getConnection ("jdbc:oracle:thin:@uml.cs.ucsb.edu:1521:xe","ychoi01","0311");
+
+
+    // Create a Statement
+
+    Statement stmt = conn.createStatement();
+
+
+    // Specify the Query to run
+
+    ResultSet rs = stmt.executeQuery("select count(accid) from account");
+
+
+    // get data of the first column
+
+    rs.next();
+
+    retVal= rs.getInt(1);
+
+   
+
+    // don't miss this
+
+    rs.close();
+
+
+   
+
+    return retVal;
+
+}
+
+
+}
